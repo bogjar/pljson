@@ -38,8 +38,7 @@ create or replace package json_printer as
   
 end json_printer;
 /
-create or replace
-package body "JSON_PRINTER" as
+create or replace package body "JSON_PRINTER" as
   max_line_len number := 0;
   cur_line_len number := 0;
 
@@ -183,7 +182,7 @@ package body "JSON_PRINTER" as
 --    dbms_lob.append(buf_lob, buf_str);
     dbms_lob.writeappend(buf_lob, length(buf_str), buf_str);
   end flush_clob;
- 
+
   procedure ppObj(obj json, indent number, buf in out nocopy clob, spaces boolean, buf_str in out nocopy varchar2);
 
   procedure ppString(elem json_value, buf in out nocopy clob, buf_str in out nocopy varchar2) is
@@ -213,7 +212,7 @@ package body "JSON_PRINTER" as
             add_to_clob(buf, buf_str, elem.str);
         end if;
     end if;
-    add_to_clob(buf, buf_str, case when elem.num = 1 then '"' else '/**/' end || newline_char);
+    add_to_clob(buf, buf_str, case when elem.num = 1 then '"' else '/**/' end);
   end;
 
   procedure ppEA(input json_list, indent number, buf in out nocopy clob, spaces boolean, buf_str in out nocopy varchar2) as
@@ -380,7 +379,7 @@ package body "JSON_PRINTER" as
     end if;
     buf := buf || str;
   end;
-  
+
   procedure ppString(elem json_value, buf in out nocopy varchar2) is
     offset number := 1;
     v_str varchar(5000 char);
@@ -408,9 +407,9 @@ package body "JSON_PRINTER" as
             add_buf(buf, elem.str);
         end if;
     end if;
-    add_buf(buf, case when elem.num = 1 then '"' else '/**/' end || newline_char);
+    add_buf(buf, case when elem.num = 1 then '"' else '/**/' end);
   end;
-  
+
   procedure ppObj(obj json, indent number, buf in out nocopy varchar2, spaces boolean);
 
   procedure ppEA(input json_list, indent number, buf in out varchar2, spaces boolean) as
@@ -512,7 +511,7 @@ package body "JSON_PRINTER" as
   begin
     max_line_len := line_length;
     cur_line_len := 0;
-    add_buf(buf, llcheck('['));    
+    add_buf(buf, llcheck('['));
     ppEA(obj, 0, buf, spaces);
     add_buf(buf, llcheck(']'));
     return buf;
